@@ -15,7 +15,7 @@ class MakeModule extends Command
      */
     protected $signature = 'make:module {module : El nombre del modulo (ej: User, Auth, Billing)} 
                                         {name : El nombre del componente (ej: Profile, Invoice)} 
-                                        {--m|migration : Crear tambien el archivo de migracion}';
+                                        {--m|migration : Crear también el archivo de migración}';
 
     /**
      * El nombre descriptivo del comando.
