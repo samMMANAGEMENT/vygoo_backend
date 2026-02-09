@@ -43,8 +43,8 @@ class PlanAndModuleSeeder extends Seeder
                 'updated_at' => now()
             ],
             [
-                'name' => 'Go',
-                'slug' => 'go',
+                'name' => 'Goo',
+                'slug' => 'goo',
                 'price' => 9.99,
                 'duration' => 30,
                 'max_users' => 5,
@@ -81,7 +81,7 @@ class PlanAndModuleSeeder extends Seeder
 
         // 3. Asignar Módulos a Planes (pivot: plan_module)
         $freePlanId = DB::table('plans')->where('slug', 'free')->value('id');
-        $goPlanId = DB::table('plans')->where('slug', 'go')->value('id');
+        $gooPlanId = DB::table('plans')->where('slug', 'goo')->value('id');
         $essentialPlanId = DB::table('plans')->where('slug', 'essential')->value('id');
         $businessPlanId = DB::table('plans')->where('slug', 'business')->value('id');
 
@@ -90,12 +90,12 @@ class PlanAndModuleSeeder extends Seeder
         foreach ($allModules as $module) {
             // --- PLAN FREE (Módulos base incluidos en todos los planes) ---
             if (in_array($module->slug, ['dashboard', 'pos', 'services', 'payments', 'settings_advanced'])) {
-                $this->assignToPlans($module->id, [$freePlanId, $goPlanId, $essentialPlanId, $businessPlanId]);
+                $this->assignToPlans($module->id, [$freePlanId, $gooPlanId, $essentialPlanId, $businessPlanId]);
             }
 
             // --- PLAN GO (Añade Gastos, Agendas e Integraciones) ---
             if (in_array($module->slug, ['expenses', 'schedules', 'integrations'])) {
-                $this->assignToPlans($module->id, [$goPlanId, $essentialPlanId, $businessPlanId]);
+                $this->assignToPlans($module->id, [$gooPlanId, $essentialPlanId, $businessPlanId]);
             }
 
             // --- PLAN ESSENTIAL (Añade Reportes y Administración) ---
