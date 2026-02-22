@@ -12,6 +12,26 @@ class EntityController extends Controller
     {
     }
 
+    public function miEntidad()
+    {
+        try {
+            $user = auth()->user();
+
+            if (!$user) {
+                return response()->json(['message' => 'No autorizado'], 401);
+            }
+
+            if (!$user->entity_id) {
+                return response()->json(['message' => 'El usuario no tiene una entidad asociada'], 404);
+            }
+
+            $entity = $this->entityService->obtenerEntidad($user->entity_id);
+            return response()->json($entity, 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
+    }
+
     public function obtenerEntidades()
     {
         try {
