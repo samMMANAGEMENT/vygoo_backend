@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             PlanAndModuleSeeder::class,
             PermissionSeeder::class,
             ProductSeeder::class,
+            ServiceSeeder::class,
         ]);
     }
 }

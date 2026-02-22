@@ -7,3 +7,4 @@ require_once __DIR__ . '/module/module.php';
 require_once __DIR__ . '/plan/plan.php';
 require_once __DIR__ . '/inventory/inventory.php';
 require_once __DIR__ . '/sales/sales.php';
+require_once __DIR__ . '/services/services.php';
