@@ -2,11 +2,14 @@
 
 namespace App\Http\Modules\Inventory\Model;
 
+use App\Traits\BelongsToEntity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
+    use BelongsToEntity;
+
     protected $fillable = [
         'entity_id',
         'name',

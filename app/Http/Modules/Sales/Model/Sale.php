@@ -3,12 +3,15 @@
 namespace App\Http\Modules\Sales\Model;
 
 use App\Models\User;
+use App\Traits\BelongsToEntity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Sale extends Model
 {
+    use BelongsToEntity;
+
     protected $fillable = [
         'entity_id',
         'seller_id',
