@@ -5,3 +5,5 @@ require_once __DIR__ . '/entity/entity.php';
 require_once __DIR__ . '/operator/operator.php';
 require_once __DIR__ . '/module/module.php';
 require_once __DIR__ . '/plan/plan.php';
+require_once __DIR__ . '/inventory/inventory.php';
+require_once __DIR__ . '/sales/sales.php';
