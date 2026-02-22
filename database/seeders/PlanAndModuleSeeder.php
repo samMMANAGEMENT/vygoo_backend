@@ -14,20 +14,31 @@ class PlanAndModuleSeeder extends Seeder
     {
         // 1. Crear Módulos
         $modules = [
-            ['name' => 'Dashboard', 'slug' => 'dashboard', 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'POS', 'slug' => 'pos', 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Servicios', 'slug' => 'services', 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Pagos', 'slug' => 'payments', 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Gastos', 'slug' => 'expenses', 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Agendas', 'slug' => 'schedules', 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Integraciones', 'slug' => 'integrations', 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Reportes', 'slug' => 'reports', 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Configuraciones Avanzadas', 'slug' => 'settings_advanced', 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'Administración', 'slug' => 'admin', 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'API Access', 'slug' => 'api_access', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Dashboard', 'slug' => 'dashboard'],
+            ['name' => 'POS', 'slug' => 'pos'],
+            ['name' => 'Servicios', 'slug' => 'services'],
+            ['name' => 'Pagos', 'slug' => 'payments'],
+            ['name' => 'Gastos', 'slug' => 'expenses'],
+            ['name' => 'Agendas', 'slug' => 'schedules'],
+            ['name' => 'Integraciones', 'slug' => 'integrations'],
+            ['name' => 'Reportes', 'slug' => 'reports'],
+            ['name' => 'Configuraciones Avanzadas', 'slug' => 'settings_advanced'],
+            ['name' => 'Administración', 'slug' => 'admin'],
+            ['name' => 'API Access', 'slug' => 'api_access'],
+            ['name' => 'Inventario', 'slug' => 'inventory'],
         ];
 
-        DB::table('modules')->insert($modules);
+        foreach ($modules as $module) {
+            DB::table('modules')->updateOrInsert(
+                ['slug' => $module['slug']],
+                [
+                    'name' => $module['name'],
+                    'status' => true,
+                    'updated_at' => now(),
+                    'created_at' => now()
+                ]
+            );
+        }
 
         // 2. Crear Planes
         $plans = [
@@ -39,8 +50,6 @@ class PlanAndModuleSeeder extends Seeder
                 'max_users' => 2,
                 'is_default' => true,
                 'status' => true,
-                'created_at' => now(),
-                'updated_at' => now()
             ],
             [
                 'name' => 'Goo',
@@ -50,8 +59,6 @@ class PlanAndModuleSeeder extends Seeder
                 'max_users' => 5,
                 'is_default' => false,
                 'status' => true,
-                'created_at' => now(),
-                'updated_at' => now()
             ],
             [
                 'name' => 'Essential',
@@ -61,8 +68,6 @@ class PlanAndModuleSeeder extends Seeder
                 'max_users' => 0, // Ilimitado
                 'is_default' => false,
                 'status' => true,
-                'created_at' => now(),
-                'updated_at' => now()
             ],
             [
                 'name' => 'Business',
@@ -72,12 +77,15 @@ class PlanAndModuleSeeder extends Seeder
                 'max_users' => 0, // Ilimitado
                 'is_default' => false,
                 'status' => true,
-                'created_at' => now(),
-                'updated_at' => now()
             ],
         ];
 
-        DB::table('plans')->insert($plans);
+        foreach ($plans as $plan) {
+            DB::table('plans')->updateOrInsert(
+                ['slug' => $plan['slug']],
+                array_merge($plan, ['updated_at' => now(), 'created_at' => now()])
+            );
+        }
 
         // 3. Asignar Módulos a Planes (pivot: plan_module)
         $freePlanId = DB::table('plans')->where('slug', 'free')->value('id');
@@ -107,6 +115,11 @@ class PlanAndModuleSeeder extends Seeder
             if ($module->slug === 'api_access') {
                 $this->assignToPlans($module->id, [$businessPlanId]);
             }
+
+            // --- INVENTARIO (Goo en adelante) ---
+            if ($module->slug === 'inventory') {
+                $this->assignToPlans($module->id, [$gooPlanId, $essentialPlanId, $businessPlanId]);
+            }
         }
     }
 
@@ -116,12 +129,10 @@ class PlanAndModuleSeeder extends Seeder
     private function assignToPlans(int $moduleId, array $planIds): void
     {
         foreach ($planIds as $planId) {
-            DB::table('plan_module')->insert([
-                'plan_id' => $planId,
-                'module_id' => $moduleId,
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
+            DB::table('plan_module')->updateOrInsert(
+                ['plan_id' => $planId, 'module_id' => $moduleId],
+                ['created_at' => now(), 'updated_at' => now()]
+            );
         }
     }
 }

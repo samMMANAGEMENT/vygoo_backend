@@ -39,8 +39,9 @@ class AuthService
         // Crear nuevo token
         $token = $user->createToken('auth-token')->plainTextToken;
 
-        // Obtener permisos usando Spatie
-        $permissions = $user->getAllPermissions()->pluck('name');
+        // Obtener permisos filtrados por plan
+        $user->load(['roles', 'permissions']);
+        $permissions = $user->getFilteredPermissions();
         $roles = $user->roles->pluck('name');
 
         // Preparar respuesta
@@ -72,22 +73,20 @@ class AuthService
     public function me($user): array
     {
         // Cargar relaciones
-        $user->load(['operador.cargo', 'afiliado']);
+        $user->load(['operator', 'roles', 'permissions']);
 
-        // Obtener permisos
-        $permissions = $user->getAllPermissions()->pluck('name');
+        // Obtener permisos filtrados por plan
+        $permissions = $user->getFilteredPermissions();
         $roles = $user->roles->pluck('name');
 
         return [
             'id' => $user->id,
             'email' => $user->email,
-            'operador' => $user->operador ? [
-                'nombre_completo' => $user->operador->nombre_completo,
-                'tipo_documento_documento' => $user->operador->tipo_documento_documento,
-                'cargo' => $user->operador->cargo,
-            ] : null,
-            'afiliado' => $user->afiliado ? [
-                'nombre_completo' => $user->afiliado->nombre_completo,
+            'operator' => $user->operator ? [
+                'name' => $user->name,
+                'type_document' => $user->operator->type_document,
+                'document' => $user->operator->document,
+                'mobile' => $user->operator->mobile,
             ] : null,
             'permissions' => $permissions,
             'roles' => $roles,
