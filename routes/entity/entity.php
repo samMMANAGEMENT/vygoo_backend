@@ -18,3 +18,10 @@ Route::middleware('auth:sanctum')->prefix('billing-config')->group(function () {
     Route::get('obtenerConfiguracion', [BillingController::class, 'obtenerConfiguracion']);
     Route::post('guardarConfiguracion', [BillingController::class, 'guardarConfiguracion']);
 });
+
+Route::middleware('auth:sanctum')->prefix('customers')->group(function () {
+    Route::get('obtenerClientes', [\App\Http\Modules\Entity\Controller\CustomerController::class, 'obtenerClientes']);
+    Route::post('guardarCliente', [\App\Http\Modules\Entity\Controller\CustomerController::class, 'guardarCliente']);
+    Route::put('modificarCliente/{id}', [\App\Http\Modules\Entity\Controller\CustomerController::class, 'modificarCliente']);
+    Route::delete('eliminarCliente/{id}', [\App\Http\Modules\Entity\Controller\CustomerController::class, 'eliminarCliente']);
+});

@@ -40,4 +40,10 @@ class Sale extends Model
     {
         return $this->belongsTo(User::class, 'seller_id');
     }
+
+    public function invoiceItems(): HasMany
+    {
+        return $this->hasMany(\App\Http\Modules\Billing\Model\InvoiceItem::class, 'invoicable_id')
+            ->where('invoicable_type', self::class);
+    }
 }

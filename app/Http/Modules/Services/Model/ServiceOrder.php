@@ -31,4 +31,10 @@ class ServiceOrder extends Model
     {
         return $this->hasMany(ServicePerformance::class, 'order_id');
     }
+
+    public function invoiceItems(): HasMany
+    {
+        return $this->hasMany(\App\Http\Modules\Billing\Model\InvoiceItem::class, 'invoicable_id')
+            ->where('invoicable_type', self::class);
+    }
 }

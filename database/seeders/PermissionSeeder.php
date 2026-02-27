@@ -50,6 +50,12 @@ class PermissionSeeder extends Seeder
                 $permissions[] = ['name' => 'inventory.editar', 'description' => 'Editar productos del inventario', 'guard_name' => 'api', 'created_at' => now(), 'updated_at' => now()];
             }
 
+            if ($module->slug === 'billing') {
+                $permissions[] = ['name' => 'billing.crear', 'description' => 'Generar facturas electrónicas', 'guard_name' => 'api', 'created_at' => now(), 'updated_at' => now()];
+                $permissions[] = ['name' => 'billing.lista', 'description' => 'Ver historial de facturas', 'guard_name' => 'api', 'created_at' => now(), 'updated_at' => now()];
+                $permissions[] = ['name' => 'billing.config', 'description' => 'Configurar parámetros de la DIAN', 'guard_name' => 'api', 'created_at' => now(), 'updated_at' => now()];
+            }
+
             // ... Puedes agregar más según necesites
         }
 

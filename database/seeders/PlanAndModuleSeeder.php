@@ -26,6 +26,7 @@ class PlanAndModuleSeeder extends Seeder
             ['name' => 'Administración', 'slug' => 'admin'],
             ['name' => 'API Access', 'slug' => 'api_access'],
             ['name' => 'Inventario', 'slug' => 'inventory'],
+            ['name' => 'Facturación', 'slug' => 'billing'],
         ];
 
         foreach ($modules as $module) {
@@ -119,6 +120,10 @@ class PlanAndModuleSeeder extends Seeder
             // --- INVENTARIO (Goo en adelante) ---
             if ($module->slug === 'inventory') {
                 $this->assignToPlans($module->id, [$gooPlanId, $essentialPlanId, $businessPlanId]);
+            }
+            // --- FACTURACIÓN (Essential en adelante) ---
+            if ($module->slug === 'billing') {
+                $this->assignToPlans($module->id, [$essentialPlanId, $businessPlanId]);
             }
         }
     }

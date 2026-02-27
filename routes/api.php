@@ -9,3 +9,4 @@ require_once __DIR__ . '/plan/plan.php';
 require_once __DIR__ . '/inventory/inventory.php';
 require_once __DIR__ . '/sales/sales.php';
 require_once __DIR__ . '/services/services.php';
+require_once __DIR__ . '/billing/billing.php';
