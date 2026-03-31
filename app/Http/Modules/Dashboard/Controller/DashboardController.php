@@ -15,15 +15,31 @@ class DashboardController extends Controller
         $this->dashboardService = $dashboardService;
     }
 
-    public function getSummary()
+    public function getSummary(\Illuminate\Http\Request $request)
     {
         try {
             $entityId = Auth::user()->entity_id;
-            $summary = $this->dashboardService->getSummary($entityId);
+            $date = $request->query('date');
+            $summary = $this->dashboardService->getSummary($entityId, $date);
             return response()->json($summary);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Error al obtener resumen del dashboard',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getDailyReport(\Illuminate\Http\Request $request)
+    {
+        try {
+            $entityId = Auth::user()->entity_id;
+            $date = $request->query('date') ?? Carbon\Carbon::now()->format('Y-m-d');
+            $report = $this->dashboardService->getDailyReport($entityId, $date);
+            return response()->json($report);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error al obtener reporte diario',
                 'error' => $e->getMessage()
             ], 500);
         }

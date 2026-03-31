@@ -1,6 +1,6 @@
-# Vygoo Backend: Core Operations Engine
+# manevo Backend: Core Operations Engine
 
-Este es el motor central de **Vygoo**, construido sobre **Laravel 11**. Proporciona una arquitectura robusta, segura y escalable para la automatización de procesos SaaS.
+Este es el motor central de **manevo**, construido sobre **Laravel 11**. Proporciona una arquitectura robusta, segura y escalable para la automatización de procesos SaaS.
 
 ## 🏗 Arquitectura de Módulos
 
@@ -29,4 +29,4 @@ El backend sigue una estructura modular ubicada en `app/Http/Modules/`, diseñad
     ```
 
 ---
-© 2026 Vygoo • Precision in Motion
+© 2026 manevo • Precision in Motion

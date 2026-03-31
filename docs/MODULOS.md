@@ -1,4 +1,4 @@
-# Guía de Creación de Módulos - Vygoo
+# Guía de Creación de Módulos - manevo
 
 Para añadir un nuevo módulo al sistema (ej. **Inventario**), debes seguir estos pasos para asegurar que la integración con el sistema de planes, permisos y frontend sea correcta.
 
