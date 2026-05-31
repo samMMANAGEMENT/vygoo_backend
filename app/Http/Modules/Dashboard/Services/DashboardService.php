@@ -45,7 +45,7 @@ class DashboardService
 
         // 5. Totals
         $totalRevenue = $totalServiceRevenue + $inventoryRevenue;
-        $netProfit = ($totalServiceRevenue - $totalOperatorCommissions) + $inventoryProfit;
+        $netProfit = ($totalServiceRevenue - $totalOperatorCommissions) + $inventoryProfit - $totalExpenses;
 
         // 6. Activity (Last 7 days)
         $last7Days = [];
@@ -97,6 +97,55 @@ class DashboardService
         // 8. Daily Detailed Report
         $dailyReport = $this->getDailyReport($entityId, $date);
 
+        // 9. Payout Metrics and Quick Pay Data
+        $totalOperatorPaid = (float) \App\Http\Modules\OperatorPayment\Model\OperatorPayment::where('entity_id', $entityId)
+            ->sum('amount');
+
+        $totalOperatorPending = 0.0;
+        $pendingPerformances = ServicePerformance::whereHas('order', function ($q) use ($entityId) {
+            $q->where('entity_id', $entityId);
+        })->where('is_paid_to_employee', false)->get();
+
+        foreach ($pendingPerformances as $perf) {
+            $totalOperatorPending += ($perf->total_net * ($perf->commission_percentage_snapshot / 100));
+        }
+
+        // Deduct general advances (unlinked payments) from total pending balance
+        $totalUnlinkedPayments = (float) \App\Http\Modules\OperatorPayment\Model\OperatorPayment::where('entity_id', $entityId)
+            ->doesntHave('performances')
+            ->sum('amount');
+        
+        $totalOperatorPending = max(0.0, $totalOperatorPending - $totalUnlinkedPayments);
+
+        // Group pending commissions by operator
+        $pendingByOperator = ServicePerformance::join('service_orders', 'service_performances.order_id', '=', 'service_orders.id')
+            ->join('operators', 'service_performances.operator_id', '=', 'operators.id')
+            ->join('users', 'operators.user_id', '=', 'users.id')
+            ->where('service_orders.entity_id', $entityId)
+            ->where('service_performances.is_paid_to_employee', false)
+            ->select(
+                'operators.id as operator_id',
+                'users.name as operator_name',
+                DB::raw('COUNT(service_performances.id) as services_count'),
+                DB::raw('SUM(service_performances.total_net * (service_performances.commission_percentage_snapshot / 100)) as pending_amount'),
+                DB::raw('string_agg(service_performances.id::text, \',\') as performance_ids')
+            )
+            ->groupBy('operators.id', 'users.name')
+            ->get()->map(function ($item) use ($entityId) {
+                // Deduct operator's general advances from their pending commissions
+                $opUnlinkedPaid = (float) \App\Http\Modules\OperatorPayment\Model\OperatorPayment::where('entity_id', $entityId)
+                    ->where('operator_id', $item->operator_id)
+                    ->doesntHave('performances')
+                    ->sum('amount');
+
+                $item->pending_amount = max(0.0, (float) $item->pending_amount - $opUnlinkedPaid);
+                $item->services_count = (int) $item->services_count;
+                return $item;
+            })
+            ->filter(function ($item) {
+                return $item->pending_amount > 0;
+            })->values();
+
         return [
             'metrics' => [
                 'total_revenue' => (float) $totalRevenue,
@@ -105,11 +154,14 @@ class DashboardService
                 'operator_commissions' => (float) $totalOperatorCommissions,
                 'total_expenses' => (float) $totalExpenses,
                 'net_profit' => (float) $netProfit,
+                'operator_paid' => $totalOperatorPaid,
+                'operator_pending' => $totalOperatorPending,
             ],
             'chart_data' => $last7Days,
             'expense_chart_data' => $last7DaysExpenses,
             'top_operators' => $topOperators,
-            'daily_report' => $dailyReport
+            'daily_report' => $dailyReport,
+            'pending_by_operator' => $pendingByOperator
         ];
     }
 
@@ -155,7 +207,7 @@ class DashboardService
                 ];
             })->values();
 
-        $todayProfit = (float)($operatorPerformances->sum('profit') + $dailySalesProfit);
+        $todayProfit = (float)($operatorPerformances->sum('profit') + $dailySalesProfit) - $todayExpenses;
 
         return [
             'total_income' => (float) $dailyIncome,

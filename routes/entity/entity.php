@@ -12,6 +12,7 @@ Route::middleware('auth:sanctum')->prefix('entities')->group(function () {
     Route::put('modificarEntidad/{id}', [EntityController::class, 'modificarEntidad']);
     Route::delete('eliminarEntidad/{id}', [EntityController::class, 'eliminarEntidad']);
     Route::post('asignarPlan/{id}', [EntityController::class, 'asignarPlan']);
+    Route::post('cambiarEntidad', [EntityController::class, 'cambiarEntidad']);
 });
 
 Route::middleware('auth:sanctum')->prefix('billing-config')->group(function () {

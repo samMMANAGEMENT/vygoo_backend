@@ -56,6 +56,11 @@ class PermissionSeeder extends Seeder
                 $permissions[] = ['name' => 'billing.config', 'description' => 'Configurar parámetros de la DIAN', 'guard_name' => 'api', 'created_at' => now(), 'updated_at' => now()];
             }
 
+            if ($module->slug === 'payments') {
+                $permissions[] = ['name' => 'payments.crear', 'description' => 'Registrar pagos a operadores', 'guard_name' => 'api', 'created_at' => now(), 'updated_at' => now()];
+                $permissions[] = ['name' => 'payments.eliminar', 'description' => 'Eliminar registros de pagos', 'guard_name' => 'api', 'created_at' => now(), 'updated_at' => now()];
+            }
+
             // ... Puedes agregar más según necesites
         }
 
@@ -63,6 +68,9 @@ class PermissionSeeder extends Seeder
         foreach ($permissions as $permission) {
             Permission::findOrCreate($permission['name'], $permission['guard_name']);
         }
+
+        // Registrar permiso especial de cambio de entidad
+        Permission::findOrCreate('change.entity', 'api');
 
         // 2. Crear Roles y asignar permisos
 

@@ -51,6 +51,7 @@ class AuthService
             'user' => [
                 'id' => $user->id,
                 'email' => $user->email,
+                'entity_id' => $user->entity_id,
                 'operator' => $user->operator ? [
                     'name' => $user->name,
                     'type_document' => $user->operator->type_document,
@@ -82,6 +83,7 @@ class AuthService
         return [
             'id' => $user->id,
             'email' => $user->email,
+            'entity_id' => $user->entity_id,
             'operator' => $user->operator ? [
                 'name' => $user->name,
                 'type_document' => $user->operator->type_document,
